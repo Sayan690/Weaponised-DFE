@@ -6,7 +6,7 @@ Weaponised DFE is the advanced implementation of DotnetFilelessExecution. It can
 
 ## Watch the DEMO
 
-[![Watch the demo](https://img.youtube.com/vi/X9_8joF9UgA/0.jpg)](https://www.youtube.com/watch?v=X9_8joF9UgA)
+[![Watch the demo](https://img.youtube.com/vi/X9_8joF9UgA/maxdefault.jpg)](https://www.youtube.com/watch?v=X9_8joF9UgA)
 
 ## Compilation
 
