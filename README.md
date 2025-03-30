@@ -12,11 +12,14 @@ Btw, before compiling make sure to change the attacker ip address.
 
 For me, here are the compilation steps ...
 ```cmd
-dotnet new console -n Weaponised-DFE
-copy Weaponised-DFE.cs Weaponised-DFE\Program.cs
 cd Weaponised-DFE
 dotnet add package Microsoft.CodeAnalysis.CSharp.Scripting
 dotnet run
+```
+or
+
+```cmd
+dotnet publish -c Release -r win-x64 --self-contained true -o out
 ```
 
 ## Usage
@@ -31,7 +34,7 @@ openssl req -new -x509 -newkey rsa:4096 -nodes -keyout auth/key.pem -out auth/ce
 
 - Rename the connect back attacker ip address in the `toExec.cs`.
 
-- Rename the connect back attacker ip address in the `Weaponised-DFE.cs` before compilation.
+- Rename the connect back attacker ip address in the `Program.cs` inside the `Weaponised-DFE` directory before compilation.
 
 - Start the https server on the attacker side
 
