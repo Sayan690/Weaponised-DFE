@@ -29,6 +29,7 @@ dotnet publish -c Release -r win-x64 --self-contained true -o out
 - Create openssl keys and certs, as under the auth directory.
 
 ```bash
+mkdir auth
 openssl req -new -x509 -newkey rsa:4096 -nodes -keyout auth/key.pem -out auth/cert.pem -days 10000
 ```
 
