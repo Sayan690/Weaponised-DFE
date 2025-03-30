@@ -19,6 +19,8 @@ dotnet run
 or
 
 ```cmd
+cd Weaponised-DFE
+dotnet add package Microsoft.CodeAnalysis.CSharp.Scripting
 dotnet publish -c Release -r win-x64 --self-contained true -o out
 ```
 
