@@ -126,6 +126,6 @@ if __name__ == '__main__':
 	port: int = 443
 	ssl_context: tuple = ("auth/cert.pem", "auth/key.pem")
 
-	dotnetAssembly: str = "calc.exe"
+	dotnetAssembly: str = "example_assemblies/calc.exe"
 
 	app.run(host = host, port = port, ssl_context = ssl_context, debug = False)
