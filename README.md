@@ -4,6 +4,10 @@
 
 Weaponised DFE is the advanced implementation of DotnetFilelessExecution. It can fetch a remote .NET Assembly, and execute it filelessly (in memory), i.e., without having to save it on the disk, all while being more secure, and undetectable than the previous DotnetFilelessExecution.
 
+## Watch the DEMO
+
+[![Watch the demo](https://img.youtube.com/vi/X9_8joF9UgA/0.jpg)](https://www.youtube.com/watch?v=X9_8joF9UgA)
+
 ## Compilation
 
 I have used direct command-line compilation using the `dotnet` command, but of course you can use Visual Studio.
