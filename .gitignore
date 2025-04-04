@@ -1,0 +1,48 @@
+# Build output directories and files
+bin/
+obj/
+out/
+*.dll
+*.exe
+*.pdb
+*.mdb
+
+# .NET-specific generated files
+*.csproj.user
+*.sln.cache
+*.suo
+*.user
+*.cache
+*.docstates
+
+# Dependency directories
+packages/
+*.nupkg
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# IDE-specific files
+# Visual Studio
+.vs/
+*.vscode/
+*.idea/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Test results
+TestResults/
+*.trx
+
+# Miscellaneous
+*.swp
+*~
+*.lock
+
+# OS-generated files
+.DS_Store
+Thumbs.db

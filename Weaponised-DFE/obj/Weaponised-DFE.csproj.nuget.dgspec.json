@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nat\\apps\\Weaponised-DFE\\Weaponised-DFE\\Weaponised-DFE.csproj": {}
+    "/home/hamy/Weaponised-DFE/Weaponised-DFE/Weaponised-DFE.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nat\\apps\\Weaponised-DFE\\Weaponised-DFE\\Weaponised-DFE.csproj": {
+    "/home/hamy/Weaponised-DFE/Weaponised-DFE/Weaponised-DFE.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nat\\apps\\Weaponised-DFE\\Weaponised-DFE\\Weaponised-DFE.csproj",
+        "projectUniqueName": "/home/hamy/Weaponised-DFE/Weaponised-DFE/Weaponised-DFE.csproj",
         "projectName": "Weaponised-DFE",
-        "projectPath": "C:\\Users\\nat\\apps\\Weaponised-DFE\\Weaponised-DFE\\Weaponised-DFE.csproj",
-        "packagesPath": "C:\\Users\\nat\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nat\\apps\\Weaponised-DFE\\Weaponised-DFE\\obj\\",
+        "projectPath": "/home/hamy/Weaponised-DFE/Weaponised-DFE/Weaponised-DFE.csproj",
+        "packagesPath": "/home/hamy/.nuget/packages/",
+        "outputPath": "/home/hamy/Weaponised-DFE/Weaponised-DFE/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\nat\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/hamy/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -60,12 +60,31 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+              "version": "[9.0.3, 9.0.3]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[9.0.3, 9.0.3]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.win-x64",
+              "version": "[9.0.3, 9.0.3]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/hamy/Downloads/dotnet-sdk-9.0.202-linux-x64/sdk/9.0.202/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     }
