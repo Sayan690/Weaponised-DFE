@@ -54,7 +54,7 @@ The `builder.py` script builds the Weaponised-DFE project using the .NET CLI (`d
    - No `config.ini`? Exits with a message.
    - No `exe_name`? Exits.
    - No `dotnet`? Exits with instructions.
-   - Permission issues? Tells you to fix perms, no `sudo` nonsense.
+   - Permission issues? Tells you to fix perms.
 
 
 ### Sample run:
