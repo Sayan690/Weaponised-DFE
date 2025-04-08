@@ -1,100 +1,102 @@
-# Weaponised-DFE Build Documentation
+# builder.md - Documentation for builder.py
 
-This document covers the `config.ini` file and the `builder.py` script used to build the Weaponised-DFE project.
+## Overview
 
-## config.ini
-
-The `config.ini` file sits in the `Weaponised-DFE` directory and tells the program and build process what to do. It’s got three key-value pairs in a simple format: `key=[value]`. Here’s what each one means:
-
-- **endpoint**: The URL path slapped onto the base URL for HTTP requests. Example: `endpoint=[dDZRSlfTMxwmIeK]` means the program hits something like `https://192.168.51.75/dDZRSlfTMxwmIeK`.
-- **url**: The base URL for the program’s network calls. Example: `url=[https://192.168.51.75/]` sets the root address.
-- **exe_name**: The name of the final executable file. Example: `exe_name=[Ballon]` makes the build spit out `Ballon.exe` instead of the default `Weaponised-DFE.exe`.
-
-Sample `config.ini`:
-```
-endpoint=[dDZRSlfTMxwmIeK]
-url=[https://192.168.51.75/]
-exe_name=[Ballon]
-```
-
-The program (`Program.cs`) reads `endpoint` and `url` at runtime to figure out where to send requests. The `builder.py` script reads `exe_name` to name the `.exe`.
-
-## builder.py
-
-The `builder.py` script builds the Weaponised-DFE project using the .NET CLI (`dotnet`). It’s a Python script that lives next to the `Weaponised-DFE` directory and does the heavy lifting. Here’s what it does:
-
-1. **Checks for config.ini**:
-   - Looks in `Weaponised-DFE/config.ini`.
-   - Pulls `exe_name` using regex (`exe_name=\[(.*?)\]`). If it’s missing, it bails with an error.
-
-2. **Sets the Executable Name**:
-   - Opens `Weaponised-DFE/Weaponised-DFE.csproj`.
-   - Adds or updates `<AssemblyName>` with the `exe_name` (e.g., `<AssemblyName>Ballon</AssemblyName>`).
-   - Saves the `.csproj` so `dotnet` builds the right `.exe`.
-
-3. **Checks .NET SDK**:
-   - Runs `dotnet --version` to see if the CLI’s there.
-   - Grabs the required version from `.csproj` (e.g., `net9.0`).
-   - If `dotnet`’s not found, it prints install instructions and exits:
-     - Windows: Download link.
-     - Linux: `sudo apt-get` command (for install, not script).
-   - If versions don’t match, it warns but keeps going.
-
-4. **Builds the Project**:
-   - Switches to `Weaponised-DFE` dir.
-   - Runs `dotnet add package Microsoft.CodeAnalysis.CSharp.Scripting` to grab the scripting dependency.
-   - Runs `dotnet publish -c Release -r win-x64 --self-contained true -o out` to build a standalone `.exe` for Windows x64.
-   - Output lands in `Weaponised-DFE/out` as `<exe_name>.exe` (e.g., `Ballon.exe`).
-
-5. **Copies the Executable**:
-   - Takes `<exe_name>.exe` from `out` and copies it to the directory where `builder.py` is run.
-   - Example: If `exe_name=Ballon`, you get `Ballon.exe` in the current dir.
-
-6. **Error Handling**:
-   - No `config.ini`? Exits with a message.
-   - No `exe_name`? Exits.
-   - No `dotnet`? Exits with instructions.
-   - Permission issues? Tells you to fix perms.
+`builder.py` is a Python script designed to automate the setup and build process for the "Weaponised-DFE" .NET application. It handles dependency verification, project configuration, NuGet package installation, and SSL certificate generation using the `cryptography` library. The script is built for reliability and portability, eliminating external tool dependencies like OpenSSL, and provides clear feedback for troubleshooting.
 
 
-### Sample run:
-```
-{20:55}~/Weaponised-DFE:main ✗ ➭ python3 builder.py
-Required .NET version from .csproj: net9.0
-dotnet CLI is installed with version 9.0.202
-Changed directory to: /home/hamy/Weaponised-DFE/Weaponised-DFE
-Adding package 'Microsoft.CodeAnalysis.CSharp.Scripting'...
+## Demo Screenshots
 
-Build succeeded in 1.0s
-info : X.509 certificate chain validation will use the fallback certificate bundle at '/home/hamy/Downloads/dotnet-sdk-9.0.202-linux-x64/sdk/9.0.202/trustedroots/codesignctl.pem'.
-info : X.509 certificate chain validation will use the fallback certificate bundle at '/home/hamy/Downloads/dotnet-sdk-9.0.202-linux-x64/sdk/9.0.202/trustedroots/timestampctl.pem'.
-info : Adding PackageReference for package 'Microsoft.CodeAnalysis.CSharp.Scripting' into project '/home/hamy/Weaponised-DFE/Weaponised-DFE/Weaponised-DFE.csproj'.
-info :   CACHE https://api.nuget.org/v3/registration5-gz-semver2/microsoft.codeanalysis.csharp.scripting/index.json
-info :   CACHE https://api.nuget.org/v3/registration5-gz-semver2/microsoft.codeanalysis.csharp.scripting/page/1.1.0-rc1-20151109-01/3.4.0.json
-info :   CACHE https://api.nuget.org/v3/registration5-gz-semver2/microsoft.codeanalysis.csharp.scripting/page/3.5.0-beta1-final/4.7.0-2.final.json
-info :   CACHE https://api.nuget.org/v3/registration5-gz-semver2/microsoft.codeanalysis.csharp.scripting/page/4.7.0/4.13.0.json
-info : Restoring packages for /home/hamy/Weaponised-DFE/Weaponised-DFE/Weaponised-DFE.csproj...
-info :   CACHE https://api.nuget.org/v3/vulnerabilities/index.json
-info :   CACHE https://api.nuget.org/v3-vulnerabilities/2025.04.04.23.31.17/vulnerability.base.json
-info :   CACHE https://api.nuget.org/v3-vulnerabilities/2025.04.04.23.31.17/2025.04.04.23.31.17/vulnerability.update.json
-info : Package 'Microsoft.CodeAnalysis.CSharp.Scripting' is compatible with all the specified frameworks in project '/home/hamy/Weaponised-DFE/Weaponised-DFE/Weaponised-DFE.csproj'.
-info : PackageReference for package 'Microsoft.CodeAnalysis.CSharp.Scripting' version '4.13.0' updated in file '/home/hamy/Weaponised-DFE/Weaponised-DFE/Weaponised-DFE.csproj'.
-info : Writing assets file to disk. Path: /home/hamy/Weaponised-DFE/Weaponised-DFE/obj/project.assets.json
-log  : Restored /home/hamy/Weaponised-DFE/Weaponised-DFE/Weaponised-DFE.csproj (in 265 ms).
-Publishing project for win-x64...
-Restore complete (1.1s)
-  Weaponised-DFE succeeded (6.6s) → out/
+| Certificate Generation | Project Build Success |
+|------------------------|-----------------------|
+| ![Cert Generation](path/to/cert-gen-image.png) | ![Build Success](path/to/build-success-image.png) |
 
-Build succeeded in 8.6s
-Copying /home/hamy/Weaponised-DFE/Weaponised-DFE/out/Ballon.exe to /home/hamy/Weaponised-DFE/Ballon.exe
-Success! Ballon.exe has been built and copied to /home/hamy/Weaponised-DFE
+*Note*: Replace placeholders with actual image paths after capturing screenshots.
 
-```
+---
 
-### Usage
-- Put `config.ini` in `Weaponised-DFE`.
-- Run `python3 builder.py` from its dir.
-- Make sure `dotnet` (e.g., 9.0) is installed first.
-- Get `<exe_name>.exe` in the current dir.
+## Features
 
-That’s it, `config.ini` drives the runtime and build, `builder.py` makes it happen.
+- **.NET SDK Verification**: Ensures the required .NET SDK is installed, offering guidance if absent.
+- **Project File Management**: Parses and updates the `.csproj` file for proper configuration.
+- **NuGet Integration**: Installs the `Microsoft.CodeAnalysis.CSharp.Scripting` package.
+- **SSL Certificate Creation**: Generates a 4096-bit RSA key and self-signed X.509 certificate (valid for 10,000 days).
+- **Error Handling**: Catches and reports issues like file access, permissions, or command failures.
+- **Platform Agnostic**: Works consistently across Windows, macOS, and Linux using Python standard libraries and `cryptography`.
+
+---
+
+## Prerequisites
+
+To use `builder.py`, ensure the following are installed:
+
+1. **Python 3.x**: Requires Python 3 (uses `#!/usr/bin/env python3` shebang).
+2. **.NET SDK**: Needed for the .NET project (version specified in `Weaponised-DFE.csproj`).
+3. **`cryptography` Library**: Install with pip:
+   - pip install cryptography
+
+---
+
+## How to Use
+
+1. **Setup**:
+   - Place `builder.py` in the root directory containing the "Weaponised-DFE" subdirectory.
+
+2. **Execution**:
+   - Run from a terminal in the script’s directory:
+     - python3 builder.py
+   - On Unix-like systems, make it executable:
+     - chmod +x builder.py
+     - ./builder.py
+
+3. **Output**:
+   - The script will:
+     - Check for .NET SDK.
+     - Add the NuGet package.
+     - Create an `auth` directory with `key.pem` and `cert.pem`.
+     - Display paths to generated files and instructions.
+
+4. **Run the Application**:
+   - Navigate to the project directory and launch:
+     - cd Weaponised-DFE
+     - dotnet run
+
+---
+
+## Functionality
+
+### .NET SDK Check
+- Confirms the .NET CLI is installed and matches the required version from `Weaponised-DFE.csproj`.
+- If missing, provides a download URL and exits.
+
+### .csproj Parsing
+- Reads `Weaponised-DFE.csproj`, ensuring `TargetFramework` and `AssemblyName` are present or added.
+
+### NuGet Package Installation
+- Executes `dotnet add package Microsoft.CodeAnalysis.CSharp.Scripting` in the project directory.
+
+### SSL Certificate Generation
+- Creates an `auth` directory if it doesn’t exist.
+- Generates:
+  - A 4096-bit RSA private key (`key.pem`), unencrypted.
+  - A self-signed X.509 certificate (`cert.pem`), valid for 10,000 days with "localhost" as the common name and SAN.
+- Uses the `cryptography` library for generation, avoiding external tools.
+
+### Error Handling
+- Handles missing files, permission issues, and subprocess failures with descriptive messages.
+
+---
+
+## Troubleshooting
+
+- **Missing `cryptography`**: Install with `pip install cryptography` and rerun.
+- **Permission Denied**: Ensure write access to the script’s directory.
+- **.NET SDK Not Found**: Follow the provided download link and install the correct version.
+
+---
+
+## Notes
+
+- The script assumes `Weaponised-DFE.csproj` and `config.ini` exist in the "Weaponised-DFE" subdirectory.
+- Generated certificates are stored in `auth/` with absolute paths displayed for reference.
+- No root/admin privileges are required; permission issues will prompt the user to fix directory access.
