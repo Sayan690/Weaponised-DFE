@@ -5,7 +5,11 @@ import sys
 import shutil
 import xml.etree.ElementTree as ET
 import re
-
+from datetime import datetime, timedelta
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.x509.oid import NameOID
 
 # Directory where builder.py is run from (this is where the executable will be copied)
 RUN_DIR = os.getcwd()
@@ -68,7 +72,71 @@ def add_package(project_dir):
         capture_output=True
     )
 
+
+def generate_ssl_certificates(builder_dir):
+    """Generate RSA private key and self-signed X.509 certificate using Python."""
+    auth_dir = os.path.join(builder_dir, "auth")
+    
+    # Create auth directory if it doesn't exist
+    if not os.path.exists(auth_dir):
+        os.makedirs(auth_dir)
+        print(f"[>] Created auth directory at: {auth_dir}")
+    
+    # Define paths for key.pem and cert.pem
+    key_path = os.path.join(auth_dir, "key.pem")
+    cert_path = os.path.join(auth_dir, "cert.pem")
+    
+    try:
+        # Generate RSA private key (4096 bits)
+        private_key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=4096
+        )
+        
+        # Generate a self-signed certificate
+        subject = issuer = x509.Name([
+            x509.NameAttribute(NameOID.COMMON_NAME, "localhost")
+        ])
+        cert = (
+            x509.CertificateBuilder()
+            .subject_name(subject)
+            .issuer_name(issuer)
+            .public_key(private_key.public_key())
+            .serial_number(x509.random_serial_number())
+            .not_valid_before(datetime.utcnow())
+            .not_valid_after(datetime.utcnow() + timedelta(days=10000))
+            .add_extension(
+                x509.SubjectAlternativeName([x509.DNSName("localhost")]),
+                critical=False
+            )
+            .sign(private_key, hashes.SHA256())
+        )
+        
+        # Write private key to key.pem (no encryption, equivalent to -nodes)
+        with open(key_path, "wb") as f:
+            f.write(
+                private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption()
+                )
+            )
+        
+        # Write certificate to cert.pem
+        with open(cert_path, "wb") as f:
+            f.write(cert.public_bytes(serialization.Encoding.PEM))
+        
+        print("[+] SSL certificates generated successfully:")
+        print(f"[*] Private key created at: {os.path.abspath(key_path)}")
+        print(f"[*] Certificate created at: {os.path.abspath(cert_path)}")
+        
+    except Exception as e:
+        print(f"[!] Error generating SSL certificates: {e}")
+        sys.exit(1)
+
+
 def main():
+    # Get full path to builder.py's directory
     builder_dir = os.path.dirname(os.path.abspath(__file__))
     project_dir = os.path.join(builder_dir, "Weaponised-DFE")
     csproj_path = os.path.join(project_dir, "Weaponised-DFE.csproj")
@@ -89,8 +157,13 @@ def main():
     required_version = parse_csproj(csproj_path)
     print(f"[>] Required .NET version from .csproj: {required_version}")
     
+    # Check prerequisites
     check_dotnet_installed(required_version)
+    
+    # Add package and generate certificates
     add_package(project_dir)
+    generate_ssl_certificates(builder_dir)
+    
     print(f"[+] Success! Weaponised-DFE has been built.")
     print("[>] Go to the \"Weaponised-DFE\" sub-directory and")
     print("[*] Use \"dotnet run\" to get the code working...")
@@ -107,4 +180,3 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"[!] Unexpected error: {e}")
         sys.exit(1)
-    
